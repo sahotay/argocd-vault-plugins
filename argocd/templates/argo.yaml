@@ -1,0 +1,128 @@
+repoServer:
+  automountServiceAccountToken: true
+  volumes:
+    - name: avp-cmp-plugin
+      configMap:
+        name: avp-cmp-plugin
+    - name: custom-tools
+      emptyDir: {}
+  initContainers:
+  - name: download-tools
+    image: registry.access.redhat.com/ubi8
+    command: [sh, -c]
+    env:
+      - name: AVP_VERSION
+        value: "1.18.1"
+    args:
+      - >-
+        curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v$(AVP_VERSION)/argocd-vault-plugin_$(AVP_VERSION)_linux_amd64 -o argocd-vault-plugin &&
+        chmod +x argocd-vault-plugin &&
+        mv argocd-vault-plugin /custom-tools/
+    volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+
+  extraContainers:
+    # argocd-vault-plugin with plain YAML
+    - name: avp-k8s
+      command:
+        - "/var/run/argocd/argocd-cmp-server"
+      image: alpine
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /tmp
+          name: tmp
+
+        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          subPath: avp-k8s.yaml
+          name: avp-cmp-plugin
+
+        - name: custom-tools
+          subPath: argocd-vault-plugin
+          mountPath: /usr/local/bin/argocd-vault-plugin
+      envFrom:
+        - secretRef:
+            name: avp-plugin-credentials
+
+    # argocd-vault-plugin with plain Kustomize
+      - name: avp-kustomize
+        command: [/var/run/argocd/argocd-cmp-server]
+        image: alpine
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          - mountPath: /tmp
+            name: tmp
+
+          # Register plugins into sidecar
+          - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+            subPath: avp-kustomize.yaml
+            name: cmp-plugin
+
+          # Important: Mount tools into $PATH
+          - name: custom-tools
+            subPath: argocd-vault-plugin
+            mountPath: /usr/local/bin/argocd-vault-plugin
+
+      # argocd-vault-plugin with Helm
+      containers:
+      - name: avp-helm
+        command: [/var/run/argocd/argocd-cmp-server]
+        image: alpine
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          - mountPath: /tmp
+            name: tmp
+
+          # Register plugins into sidecar
+          - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+            subPath: avp-helm.yaml
+            name: cmp-plugin
+
+          # Important: Mount tools into $PATH
+          - name: custom-tools
+            subPath: argocd-vault-plugin
+            mountPath: /usr/local/bin/argocd-vault-plugin
+
+## Server
+server:
+  metrics:
+    enabled: true
+  service:
+    type: NodePort
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "alb"
+      alb.ingress.kubernetes.io/scheme: internal
+      external-dns.alpha.kubernetes.io/hostname: argocd.techtalk.com
+      alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+      alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+      alb.ingress.kubernetes.io/success-codes: '200'
+      alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+      alb.ingress.kubernetes.io/certificate-arn: ''
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '443'
+    hosts:
+      - argocd.techtalk.com
+    https: true
