@@ -1,0 +1,2 @@
+# avp
+ArgoCD Vault Plugin
