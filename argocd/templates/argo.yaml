@@ -26,7 +26,7 @@ repoServer:
   - name: avp-k8s
     command:
     - "/var/run/argocd/argocd-cmp-server"
-    image: alpine
+    image: quay.io/argoproj/argocd
     securityContext:
       runAsNonRoot: true
       runAsUser: 999
@@ -52,7 +52,7 @@ repoServer:
   # argocd-vault-plugin with plain Kustomize
   - name: avp-kustomize
     command: [ /var/run/argocd/argocd-cmp-server ]
-    image: alpine
+    image: quay.io/argoproj/argocd
     securityContext:
       runAsNonRoot: true
       runAsUser: 999
@@ -75,7 +75,7 @@ repoServer:
     # argocd-vault-plugin with Helm
   - name: avp-helm
     command: [ /var/run/argocd/argocd-cmp-server ]
-    image: alpine
+    image: quay.io/argoproj/argocd
     securityContext:
       runAsNonRoot: true
       runAsUser: 999

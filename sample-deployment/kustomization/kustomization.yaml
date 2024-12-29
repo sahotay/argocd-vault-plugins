@@ -4,7 +4,3 @@ resources:
   - configmap.yaml
   - secret.yaml
   - deployment.yaml
-commonLabels:
-  app: demo-avp-kustomization
-  managed-by: devops
-  owner: tech-talk
