@@ -4,17 +4,17 @@ resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
-  atomic           = true
-  cleanup_on_fail  = true
-  timeout          = 800
-  values = [
-    file("${path.module}/templates/argocd_values.yaml")
-  ]
+
+  # Apply configurations from values file
+  values = [file("${path.module}/argo.yaml")]
+
+  # Set admin password securely
   set_sensitive {
     name  = "configs.secret.argocdServerAdminPassword"
-    value = local.workspace.admin_password == "" ? "" : bcrypt(local.workspace.admin_password)
+    value = local.workspace.admin_password != "" ? bcrypt(local.workspace.admin_password) : ""
   }
 
+  # Enable insecure server access (for demo purposes)
   set {
     name  = "configs.params.server\\.insecure"
     value = true
