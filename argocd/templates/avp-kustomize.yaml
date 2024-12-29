@@ -7,13 +7,13 @@ spec:
   discover:
     find:
       command:
-        - find
-        - "."
-        - -name
-        - kustomization.yaml
+      - find
+      - "."
+      - -name
+      - kustomization.yaml
   generate:
     command:
-      - sh
-      - "-c"
-      - "kustomize build . | argocd-vault-plugin generate -"
+    - sh
+    - "-c"
+    - "kustomize build . | argocd-vault-plugin generate -"
   lockRepo: false

@@ -16,3 +16,9 @@ rm -f kubectl
 curl -LO https://github.com/derailed/k9s/releases/download/v0.32.7/k9s_linux_amd64.deb
 sudo apt install -y ./k9s_linux_amd64.deb
 rm -f k9s_linux_amd64.deb
+
+# Install helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm -f get_helm.sh

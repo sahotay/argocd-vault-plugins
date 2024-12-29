@@ -3,11 +3,11 @@ resource "kubernetes_config_map" "cmp-plugin" {
     name      = "avp-cmp-plugin"
     namespace = "argocd"
   }
-    data = {
-    "avp-kustomize.yaml" = templatefile("${path.module}/templates/cmp-plugin-kustomize.yaml", { name = "avp-kustomize" })
-    "avp-helm.yaml"      = templatefile("${path.module}/templates/cmp-plugin-helm.yaml", { name = "avp-helm" })
-    "avp-k8s.yaml"       = templatefile("${path.module}/templates/cmp-plugin-k8s.yaml", { name = "avp-k8s" })
-    }
+  data = {
+    "avp-kustomize.yaml" = templatefile("${path.module}/templates/avp-kustomize.yaml", { name = "avp-kustomize" })
+    "avp-helm.yaml"      = templatefile("${path.module}/templates/avp-helm.yaml", { name = "avp-helm" })
+    "avp-k8s.yaml"       = templatefile("${path.module}/templates/avp-k8s.yaml", { name = "avp-k8s" })
+  }
 }
 
 

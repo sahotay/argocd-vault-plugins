@@ -7,20 +7,20 @@ spec:
   discover:
     find:
       command:
-        - sh
-        - "-c"
-        - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
+      - sh
+      - "-c"
+      - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
   init:
     command:
-      - sh
-      - "-c"
-      - |
-        helm dependency build
+    - sh
+    - "-c"
+    - |
+      helm dependency build
   generate:
     command:
-      - sh
-      - "-c"
-      - |
-        helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE . |
-        argocd-vault-plugin generate -
+    - sh
+    - "-c"
+    - |
+      helm template $ARGOCD_APP_NAME --include-crds -n $ARGOCD_APP_NAMESPACE . |
+      argocd-vault-plugin generate -
   lockRepo: false

@@ -7,7 +7,7 @@
             "version": "latest"
         }
     },
-    "onCreateCommand": "./script/setup.sh",
+    "onCreateCommand": "./.devcontainer/setup.sh",
     "customizations": {
         "vscode": {
             "extensions": [

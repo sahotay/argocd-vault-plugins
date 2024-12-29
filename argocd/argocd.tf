@@ -6,12 +6,12 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
 
   # Apply configurations from values file
-  values = [file("${path.module}/argo.yaml")]
+  values = [file("${path.module}/templates/argo.yaml")]
 
   # Set admin password securely
   set_sensitive {
     name  = "configs.secret.argocdServerAdminPassword"
-    value = local.workspace.admin_password != "" ? bcrypt(local.workspace.admin_password) : ""
+    value = local.admin_password != "" ? bcrypt(local.admin_password) : ""
   }
 
   # Enable insecure server access (for demo purposes)
