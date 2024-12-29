@@ -1,0 +1,20 @@
+{
+    "name": "AWS Kubernetes Environment",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/aws-cli:latest": {},
+        "ghcr.io/devcontainers/features/terraform:1": {
+            "version": "latest"
+        }
+    },
+    "onCreateCommand": "./script/setup.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "hashicorp.terraform",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "amazonwebservices.aws-toolkit-vscode"
+            ]
+        }
+    }
+}
