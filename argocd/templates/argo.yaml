@@ -71,6 +71,9 @@ repoServer:
     - name: custom-tools
       subPath: argocd-vault-plugin
       mountPath: /usr/local/bin/argocd-vault-plugin
+    envFrom:
+    - secretRef:
+        name: avp-plugin-credentials
 
     # argocd-vault-plugin with Helm
   - name: avp-helm
@@ -95,6 +98,9 @@ repoServer:
     - name: custom-tools
       subPath: argocd-vault-plugin
       mountPath: /usr/local/bin/argocd-vault-plugin
+    envFrom:
+    - secretRef:
+        name: avp-plugin-credentials
 
 ## Server
 server:

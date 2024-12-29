@@ -15,19 +15,8 @@ spec:
       containers:
       - name: demo-avp-kustomization
         image: nginx
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            configMapKeyRef:
-              name: db-config
-              key: DATABASE_URL
-        - name: DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: db-secret
-              key: DB_USERNAME
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secret
-              key: DB_PASSWORD
+        envFrom:
+        - configMapRef:
+            name: db-config
+        - secretRef:
+            name: db-secret
