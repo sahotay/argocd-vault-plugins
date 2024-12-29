@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - configmap.yaml
+  - secret.yaml
+  - deployment.yaml
+commonLabels:
+  app: demo-avp-kustomization
+  managed-by: devops
+  owner: tech-talk
