@@ -131,3 +131,28 @@ terraform destroy
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
 - [ArgoCD Vault Plugin](https://github.com/argoproj-labs/argocd-vault-plugin)
 - [Terraform Documentation](https://www.terraform.io/docs/index.html)
+
+## Approle
+1. vault auth enable approle
+
+2. vault write auth/approle/role/argocd-avp \
+    token_type=batch \
+    secret_id_ttl=10m \
+    token_ttl=20m \
+    token_max_ttl=30m \
+    secret_id_num_uses=40
+
+3. create and attach policy - vault write auth/approle/role/argocd-avp policies=argo-avp-policy
+```json
+path "auth/approle/login" {
+  capabilities = ["create", "read", "update"]
+}
+
+path "argo/*" {
+  capabilities = ["read", "list"]
+}
+```
+4. vault read auth/approle/role/argocd-avp/role-id
+
+5. vault write -f auth/approle/role/argocd-avp/secret-id
+
